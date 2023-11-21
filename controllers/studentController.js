@@ -5,8 +5,15 @@ const { Student, Course } = require('../models');
 // TODO: Create an aggregate function to get the number of students overall
 const headCount = async () => {
   // Your code here
-  const numberOfStudents = await Student.aggregate();
-  return numberOfStudents;
+  const result = await Student.aggregate([
+    {
+      $group: {
+        _id: null,
+        numberOfStudents: { $sum: 1 },
+      },
+    },
+  ]);
+  return result[0].numberOfStudents;
 }
 
 // Execute the aggregate method on the Student model and calculate the overall grade by using the $avg operator
@@ -15,6 +22,7 @@ const grade = async (studentId) =>
     // TODO: Ensure we include only the student who can match the given ObjectId using the $match operator
     {
       // Your code here
+      $match: { studentId: }
     },
     {
       $unwind: '$assignments',
@@ -22,6 +30,7 @@ const grade = async (studentId) =>
     // TODO: Group information for the student with the given ObjectId alongside an overall grade calculated using the $avg operator
     {
       // Your code here
+      
     },
   ]);
 
@@ -40,6 +49,7 @@ module.exports = {
       return res.status(500).json(err);
     }
   },
+
   // Get a single student
   async getSingleStudent(req, res) {
     try {
@@ -60,6 +70,7 @@ module.exports = {
       return res.status(500).json(err);
     }
   },
+
   // create a new student
   async createStudent(req, res) {
     try {
@@ -69,6 +80,7 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+
   // Delete a student and remove them from the course
   async deleteStudent(req, res) {
     try {
@@ -119,6 +131,7 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+
   // Remove assignment from a student
   async removeAssignment(req, res) {
     try {
